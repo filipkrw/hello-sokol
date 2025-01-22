@@ -11,3 +11,12 @@
 
 #define SOKOL_GP_IMPL
 #include "sokol_gp.h"
+
+#define SOKOL_GL_IMPL
+#include "util/sokol_gl.h"
+
+#define FONTSTASH_IMPLEMENTATION	
+#include "lib/fontstash.h"
+
+#define SOKOL_FONTSTASH_IMPL
+#include "util/sokol_fontstash.h"

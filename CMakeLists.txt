@@ -17,6 +17,5 @@ if(APPLE)
         "-framework QuartzCore"
         "-framework IOKit"
         "-framework OpenGL"
-
     )
 endif()
