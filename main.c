@@ -11,78 +11,6 @@
 static FONScontext *fs;
 static int fontNormal;
 
-static void draw_corner_arc(float cx, float cy, float radius,
-                            float start_angle, float end_angle,
-                            int segments)
-{
-    if (segments < 1)
-    {
-        segments = 1;
-    }
-    /* We'll store up to segments+2 points in a small local array.
-       For large segments, you might want dynamic allocation. */
-    if (segments > 63)
-    {
-        segments = 63;
-    }
-
-    sgp_point pts[64];
-    pts[0].x = cx;
-    pts[0].y = cy;
-
-    float step = (end_angle - start_angle) / (float)segments;
-    for (int i = 0; i <= segments; i++)
-    {
-        float a = start_angle + i * step;
-        pts[i + 1].x = cx + cosf(a) * radius;
-        pts[i + 1].y = cy + sinf(a) * radius;
-    }
-
-    /* Now draw them as a triangle strip. This produces a filled arc. */
-    // sgp_draw_filled_triangles_strip(pts, (uint32_t)(segments + 2));
-    // Pseudocode
-    for (int i = 0; i < segments + 1; i++)
-    {
-        sgp_draw_filled_triangle(
-            cx, cy,                    // center
-            pts[i].x, pts[i].y,        // arc[i]
-            pts[i + 1].x, pts[i + 1].y // arc[i+1]
-        );
-    }
-}
-
-static void sgp_draw_filled_rounded_rect(float x, float y,
-                                         float w, float h,
-                                         float r, /* corner radius */
-                                         int segments)
-{
-    /* 1) The middle rectangle (avoiding corners). */
-    sgp_draw_filled_rect(x + r, y + r, w - 2 * r, h - 2 * r);
-
-    /* 2) Bars along the top/bottom edges (minus the corners). */
-    sgp_draw_filled_rect(x + r, y, w - 2 * r, r);         // top bar
-    sgp_draw_filled_rect(x + r, y + h - r, w - 2 * r, r); // bottom bar
-
-    /* 3) Bars along the left/right edges (minus the corners). */
-    sgp_draw_filled_rect(x, y + r, r, h - 2 * r);         // left bar
-    sgp_draw_filled_rect(x + w - r, y + r, r, h - 2 * r); // right bar
-
-    /* 4) Each corner arc, approximated with a triangle fan of `segments` steps. */
-
-    /* top-left corner: angles go from π to 1.5π */
-    draw_corner_arc(x + r, y + r, r, (float)M_PI, 1.5f * (float)M_PI, segments);
-
-    /* top-right corner: angles from 1.5π to 2π
-       or equivalently -0.5π to 0.0, whichever you prefer */
-    draw_corner_arc(x + w - r, y + r, r, 1.5f * (float)M_PI, 2.0f * (float)M_PI, segments);
-
-    /* bottom-right corner: 0 to 0.5π */
-    draw_corner_arc(x + w - r, y + h - r, r, 0.0f, 0.5f * (float)M_PI, segments);
-
-    /* bottom-left corner: 0.5π to π */
-    draw_corner_arc(x + r, y + h - r, r, 0.5f * (float)M_PI, (float)M_PI, segments);
-}
-
 void draw_rounded_rect(float x, float y, float w, float h, float r, int segments)
 {
     // 1) Center
@@ -214,14 +142,14 @@ static void frame(void)
     sgl_v2f(0.0f, (float)height);
     sgl_end();
 
-    sgl_c4f(1.0f, 1.0f, 1.0f, 1.0f);
-    draw_rounded_rect(100.0f, 100.f, 100.0f, 100.0f, 20.0f, 16);
+    sgl_c4f(0.5f, 0.5f, 0.5f, 1.0f);
+    draw_rounded_rect(50.0f, 50.f, width - 100.0f, height - 100.0f, 16.0f, 8);
 
     fonsClearState(fs);
     fonsSetSize(fs, 24.0f * 8);
     fonsSetFont(fs, fontNormal);
-    fonsSetColor(fs, 0xffffffff); /* White in RGBA */
-    fonsDrawText(fs, 260.0f, 208.0f, "Hej Zu!", NULL);
+    fonsSetColor(fs, 0xffffffff);
+    fonsDrawText(fs, 260.0f, 400.0f, "Hello Sokol", NULL);
 
     /* Flush FontStash so it actually renders */
     sfons_flush(fs);
@@ -242,7 +170,6 @@ static void init(void)
     sgl_setup(&(sgl_desc_t){
         .logger.func = slog_func,
     });
-    // sgp_setup(&(sgp_desc){});
 
     fs = sfons_create(&(sfons_desc_t){
         .width = 2048,
