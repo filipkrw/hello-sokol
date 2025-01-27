@@ -6,6 +6,8 @@
 #include "util/sokol_gl.h"
 #include "lib/fontstash.h"
 #include "util/sokol_fontstash.h"
+
+#define _USE_MATH_DEFINES
 #include <math.h>
 
 static FONScontext *fs;

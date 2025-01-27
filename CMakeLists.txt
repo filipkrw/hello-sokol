@@ -4,9 +4,18 @@ project(MySokolApp C)
 set(CMAKE_C_STANDARD 99)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 
+set(SOURCES )
+
+if (APPLE) 
+    list(APPEND SOURCES sokol_impl.m)
+else()
+    list(APPEND SOURCES sokol_impl.c)
+endif()
+
+
 add_executable(MySokolApp
     main.c
-    sokol_impl.m 
+    ${SOURCES}
 )
 
 if(APPLE)
