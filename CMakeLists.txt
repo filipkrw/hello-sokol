@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(MySokolApp C)
+project(HelloSokol C)
 
 set(CMAKE_C_STANDARD 99)
 set(CMAKE_C_STANDARD_REQUIRED ON)
@@ -13,13 +13,13 @@ else()
 endif()
 
 
-add_executable(MySokolApp
+add_executable(HelloSokol
     main.c
     ${SOURCES}
 )
 
 if(APPLE)
-    target_link_libraries(MySokolApp
+    target_link_libraries(HelloSokol
         "-framework Cocoa"
         # "-framework Metal"
         # "-framework MetalKit" 
